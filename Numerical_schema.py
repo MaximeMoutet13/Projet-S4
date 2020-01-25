@@ -5,6 +5,12 @@ __date__ = "24/01/20"
 
 import matplotlib.pyplot as plt
 from Parameters import *
+import os
+
+os.system("start" + "/home/maxime/Documents/S4/Projet_Modélisation_Climat/ImagesClimat")
+files = os.listdir("/home/maxime/Documents/S4/Projet_Modélisation_Climat/ImagesClimat")
+for i in range(0, len(files)):
+    os.remove("/home/maxime/Documents/S4/Projet_Modélisation_Climat/ImagesClimat" + '/' + files[i])
 
 xs = 0.95
 
