@@ -15,7 +15,9 @@ Left member of the EDP
 
 Rt = 6371e3  # Earth radius in meters
 C = 14 / B  # Heat capacity of the relevant layers of athmosphere divided by B
-D = 3.5e6 * B * Rt ** 2  # Phenomenological thermal diffusion coefficient which absorbed other things
+# Phenomenological thermal diffusion coefficient which absorbed other things
+D = 0.310 \
+    # *B / Rt ** 2
 
 ########################################################################################################################
 
@@ -45,10 +47,10 @@ def a(x, xs):
     Absorption function, equal to 1-alb(x) where alb(x) is the albedo
     :param xs: sine of the latitude of ice-sheet edge
     """
-    if x > xs:
-        return b0
-    else:
+    if abs(x) < xs:
         return a0 + a2 * (3 * x ** 2 - 1) / 2
+    else:
+        return b0
 
 
 def second_member(x, xs):
@@ -70,6 +72,7 @@ dx = 0.01
 Nx = round((xf - x0) / dx)
 
 X = x0 + dx * np.arange(Nx + 1)
+
 
 # Initial conditions
 
