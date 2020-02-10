@@ -1,20 +1,33 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from Parameters import second_member, D, C, A, B, T0
+from Parameters import *
 import time
 
 x0, xf = -1, 1
 dx = 0.01
+Nx = round((xf - x0) / dx)
+x = np.linspace(x0, xf, Nx)
 
 t0, tf = 0, 10
 dt = 0.001
+Nt = round((tf - t0) / dt)
 
 xs = 0.95
 
-alpha = (D * dt) / (C * dx ** 2)
 
+def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
+    """
+    :param x0:
+    :param xf:
+    :param dx:
+    :param t0:
+    :param tf:
+    :param dt:
+    :param T0: Initial T as a function of x
+    :param F: Second member of the EDP as a function of x, xs
+    :param ice: sine of the latitude of ice sheet edge as a function of T0
+    :return:
+    """
 
-def schema(x0, xf, dx, t0, tf, dt, F):
     Nx = round((xf - x0) / dx)
     Nt = round((tf - t0) / dt)
 
@@ -22,26 +35,60 @@ def schema(x0, xf, dx, t0, tf, dt, F):
 
     I = A + B * T0(x)
     RI = np.zeros(Nx)
+    RI2 = np.zeros(Nx)
+    alpha = (D * dt) / (C * dx ** 2)
+    plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="temps 0")
+    xs = ice(I, x)
 
     for n in range(Nt):
         for j in range(1, Nx - 1):
+            # asymetrique:
             RI[j] = I[j + 1] * (-2 * alpha * dx * x[j] + alpha * (1 - x[j] ** 2)) + I[j] * (1 + 2 * alpha * x[j] * dx
                                                                                             - 2 * (1 - x[
                         j] ** 2) * alpha - dt / C) + I[j - 1] * alpha * (1 - x[j] ** 2) + dt * F(x[j], xs) / C
+
+            # symetrique:
+            RI2[j] = I[j] + dt * (F(x[j], xs) - x[j] * D * (I[j + 1] - I[j]) / dx + (1 - x[j] ** 2) * D * (
+                    I[j + 1] + I[j - 1] - 2 * I[j]) / dx ** 2 - I[j]) / C
         for j in range(1, Nx - 1):
-            I[j] = RI[j]
+            I[j] = RI2[j]
+        xs = ice(I, x)
+        # plt.plot(xs, Is, "+b")
 
         if n % 100 == 0:
-            plotlabel = "t = %1.2f" % (n * dt)
-            plt.plot(x, I, label=plotlabel, color=plt.get_cmap('copper')(float(n) / Nt))
-    plt.show()
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
+
+        if n == Nt - 1:
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
 
 
 def homogene(x, xs):
     return 0
 
 
+def T0(x):
+    """
+    Sea level temperature as a function of latitude for the climate in 1975
+    """
+    return -50 * x ** 2 + 28
+
+
+def latitudeS(I0, x):
+    if I0[0] >= 186.9:
+        return 1
+    for i, I in enumerate(I0[1:]):
+        if I >= 186.9 - 0.001:
+            return abs((x[i - 1] + x[i]) / 2)
+    return 0
+
+
 debut = time.time()
-schema(x0, xf, dx, t0, tf, dt, homogene)
+schema(x0, xf, dx, t0, tf, dt, T0, homogene, latitudeS)
 fin = time.time()
-print(fin - debut)
+
+plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "r")
+plt.xlabel(u'$x$', fontsize=26)
+plt.ylabel(u'$I$', fontsize=26, rotation=0)
+plt.title(u'Schéma explicite')
+plt.legend()
+plt.show()
