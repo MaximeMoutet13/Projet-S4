@@ -14,7 +14,7 @@ Nt = round((tf - t0) / dt)
 xs = 0.95
 
 
-def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
+def schema(x0, xf, dx, t0, tf, dt, T0, F, ice, symetrique=True):
     """
     :param x0:
     :param xf:
@@ -35,23 +35,23 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
 
     I = A + B * T0(x)
     RI = np.zeros(Nx)
-    RI2 = np.zeros(Nx)
     alpha = (D * dt) / (C * dx ** 2)
     plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="temps 0")
     xs = ice(I, x)
 
     for n in range(Nt):
+        print(n * 100 / Nt, "%")
         for j in range(1, Nx - 1):
-            # asymetrique:
-            RI[j] = I[j + 1] * (-2 * alpha * dx * x[j] + alpha * (1 - x[j] ** 2)) + I[j] * (1 + 2 * alpha * x[j] * dx
+            if symetrique:
+                RI[j] = I[j] + dt * (F(x[j], xs) - x[j] * D * (I[j + 1] - I[j - 1]) / dx + (1 - x[j] ** 2) * D * (
+                        I[j + 1] + I[j - 1] - 2 * I[j]) / dx ** 2 - I[j]) / C
+            else:
+                RI[j] = I[j + 1] * (-2 * alpha * dx * x[j] + alpha * (1 - x[j] ** 2)) + I[j] * (1 + 2 * alpha * x[j] * dx
                                                                                             - 2 * (1 - x[
                         j] ** 2) * alpha - dt / C) + I[j - 1] * alpha * (1 - x[j] ** 2) + dt * F(x[j], xs) / C
 
-            # symetrique:
-            RI2[j] = I[j] + dt * (F(x[j], xs) - x[j] * D * (I[j + 1] - I[j]) / dx + (1 - x[j] ** 2) * D * (
-                    I[j + 1] + I[j - 1] - 2 * I[j]) / dx ** 2 - I[j]) / C
         for j in range(1, Nx - 1):
-            I[j] = RI2[j]
+            I[j] = RI[j]
         xs = ice(I, x)
         # plt.plot(xs, Is, "+b")
 
@@ -60,6 +60,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
 
         if n == Nt - 1:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
+    return xs
 
 
 def homogene(x, xs):
@@ -83,7 +84,7 @@ def latitudeS(I0, x):
 
 
 debut = time.time()
-schema(x0, xf, dx, t0, tf, dt, T0, homogene, latitudeS)
+print(schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS))
 fin = time.time()
 
 plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "r")

@@ -40,12 +40,12 @@ def second_member(x, xs):
     return Q * S(x) * a(x, xs)
 
 
-x0, xf = -1, 1
+x0, xf = 0, 1
 dx = 0.01
 Nx = round((xf - x0) / dx)
 x = np.linspace(x0, xf, Nx)
 
-t0, tf = 0, 10
+t0, tf = 0, 1
 dt = 0.01
 Nt = round((tf - t0) / dt)
 
@@ -57,18 +57,21 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
     Nt = round((tf - t0) / dt)
 
     x = np.linspace(x0, xf, Nx)
-
+    xs = 0.95
     I = A + B * T0(x)
-    RI = np.zeros(Nx)
+    plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt))
 
     for n in range(Nt):
+        print("________________________")
+        print(n * 100 / Nt, "%")
         M = F(x)
-        z = Vec(x, I, func)
-        RI = np.linalg.solve(M, z)
-        I = RI
-
-        if n % 100 == 0:
-            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
+        q = np.linalg.inv(M)
+        z = delta() * I + Vec(x, xs, I, func)
+        R = np.dot(q, z)
+        print(R)
+        # print(R)
+        I = R
+        plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
 
 
 def alpha(x):
@@ -101,13 +104,12 @@ def Mat(x):
     return A
 
 
-def Vec(x, I, func):
+def Vec(x, xs, I, func):
     vec = np.zeros(Nx)
     for i in range(Nx):
-        vec[i] = func(x[i], 0.95)
+        vec[i] = func(x[i], xs)
     vec[0], vec[-1] = 0, 0
-    B = I * delta() + vec
-    return B
+    return vec
 
 
 def homogene(x, xs):
