@@ -40,12 +40,12 @@ def second_member(x, xs):
     return Q * S(x) * a(x, xs)
 
 
-x0, xf = 0, 1
+x0, xf = -1, 1
 dx = 0.01
 Nx = round((xf - x0) / dx)
 x = np.linspace(x0, xf, Nx)
 
-t0, tf = 0, 1
+t0, tf = 0, 10
 dt = 0.01
 Nt = round((tf - t0) / dt)
 
@@ -59,20 +59,23 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
     x = np.linspace(x0, xf, Nx)
     xs = 0.95
     I = A + B * T0(x)
-    plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt))
+    plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
 
     for n in range(Nt):
-        print("________________________")
+        # print("________________________")
         print(n * 100 / Nt, "%")
         M = F(x)
         q = np.linalg.inv(M)
         z = delta() * I + Vec(x, xs, I, func)
         R = np.dot(q, z)
-        print(R)
+        # print(R)
         # print(R)
         I = R
-        plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
+        if n % 100 == 0:
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
 
+        if n == Nt - 1:
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
 
 def alpha(x):
     return x * D / dx - (1 - x ** 2) * D / dx ** 2
@@ -125,9 +128,10 @@ def T0(x):
 
 schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member)
 
-plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "r")
-plt.xlabel(u'$x$', fontsize=26)
-plt.ylabel(u'$I$', fontsize=26, rotation=0)
-plt.title(u'Schéma explicite')
+plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
+plt.xlabel(u'$x$', fontsize=20)
+plt.ylabel(u'$I (X.m^{-2})$', fontsize=20, rotation=90)
+plt.title(u'Schéma implicite')
 plt.legend()
+plt.savefig("Imp.png")
 plt.show()

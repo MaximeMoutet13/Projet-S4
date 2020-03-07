@@ -36,7 +36,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice, symetrique=True):
     I = A + B * T0(x)
     RI = np.zeros(Nx)
     alpha = (D * dt) / (C * dx ** 2)
-    plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="temps 0")
+    plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="temps initial")
     xs = ice(I, x)
 
     for n in range(Nt):
@@ -84,12 +84,13 @@ def latitudeS(I0, x):
 
 
 debut = time.time()
-print(schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS))
+print(schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS, symetrique=False))
 fin = time.time()
 
-plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "r")
-plt.xlabel(u'$x$', fontsize=26)
-plt.ylabel(u'$I$', fontsize=26, rotation=0)
-plt.title(u'Schéma explicite')
+plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
+plt.xlabel(u'$x$', fontsize=20)
+plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
+plt.title(u'Schéma explicite asymétrique')
 plt.legend()
+# plt.savefig("Exp_sol_asym.png")
 plt.show()
