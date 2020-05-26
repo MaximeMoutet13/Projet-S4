@@ -30,8 +30,9 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
         z = delta() * I + Vec(x, xs, I, func)
         R = np.linalg.solve(M, z)
         # print(R)
-        # print(R)
         I = R
+        I[0] = I[1]
+        I[-1] = I[-2]
         if n % 100 == 0:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
