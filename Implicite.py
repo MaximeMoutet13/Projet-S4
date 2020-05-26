@@ -40,7 +40,7 @@ def second_member(x, xs):
     return Q * S(x) * a(x, xs)
 
 
-x0, xf = -1, 1
+x0, xf = -1, 0
 dx = 0.01
 Nx = round((xf - x0) / dx)
 x = np.linspace(x0, xf, Nx)
@@ -65,9 +65,9 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
         # print("________________________")
         print(n * 100 / Nt, "%")
         M = F(x)
-        q = np.linalg.inv(M)
+        # q = np.linalg.inv(M)
         z = delta() * I + Vec(x, xs, I, func)
-        R = np.dot(q, z)
+        R = np.linalg.solve(M, z)
         # print(R)
         # print(R)
         I = R
@@ -78,19 +78,19 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
 
 def alpha(x):
-    return x * D / dx - (1 - x ** 2) * D / dx ** 2
+    return ((x * D) / dx) - (((1 - x ** 2) * D) / (dx ** 2))
 
 
 def beta(x):
-    return C / dt + 2 * (1 - x ** 2) / dx ** 2
+    return (C / dt) + 2 * (((1 - x ** 2) * D) / (dx ** 2))  + 1
 
 
 def gamma(x):
-    return - x * D / dx - (1 - x ** 2) * D / dx ** 2
+    return - (x * D / dx) -((1 - x ** 2) * D) / (dx ** 2)
 
 
 def delta():
-    return C / dt - 1
+    return C / dt
 
 
 def Mat(x):
@@ -133,5 +133,5 @@ plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (X.m^{-2})$', fontsize=20, rotation=90)
 plt.title(u'Schéma implicite')
 plt.legend()
-plt.savefig("Imp.png")
+# plt.savefig("Imp.png")
 plt.show()
