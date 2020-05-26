@@ -21,7 +21,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
     xs = 0.95
     I = A_cste + B_cste * T0(x)
     plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
-
+    plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
     for n in range(Nt):
         # print("________________________")
         print(n * 100 / Nt, "%")
@@ -34,10 +34,10 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
         I = R
         if n % 100 == 0:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
-
+            plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
         if n == Nt - 1:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
-
+            plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
 def alpha(x):
     return ((x * D) / dx) - (((1 - x ** 2) * D) / (dx ** 2))
 
@@ -78,7 +78,7 @@ def Vec(x, xs, I, func):
 
 schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member)
 
-plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
+plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (X.m^{-2})$', fontsize=20, rotation=90)
 plt.title(u'Schéma implicite')
