@@ -37,8 +37,14 @@ def second_member(x, xs):
     return Q * S(x) * a(x, xs)
 
 
+def homogene(x, xs):
+    return 0
+
+
 def T0(x):
     """
     Sea level temperature as a function of latitude for the climate in 1975
     """
     return -50 * x ** 2 + 28
+
+Ix0, Ix1 = -44.2, -44.2

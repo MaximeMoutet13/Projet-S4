@@ -1,43 +1,4 @@
-__author__ = "maxime"
-__file__ = "Implicite.py"
-__date__ = "10/02/20"
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-A = 201.4
-B = 1.45
-D = 0.310
-C = 14 / B
-Q = 340  # W.m-2
-
-
-def S(x):
-    """
-    Mean annual distribution of radiation at each latitude
-    """
-    S2 = -0.482
-    return 1 + S2 * (3 * x ** 2 - 1) / 2
-
-
-def a(x, xs):
-    """
-    Absorption function, equal to 1-alb(x) where alb(x) is the albedo
-    :param xs: sine of the latitude of ice-sheet edge (positive)
-    """
-    b0 = 0.38
-    a0, a2 = 0.697, 0.0779
-    if abs(x) < xs:
-        return a0 + a2 * (3 * x ** 2 - 1) / 2
-    else:
-        return b0
-
-
-def second_member(x, xs):
-    """
-    Gives the second member of the EDP
-    """
-    return Q * S(x) * a(x, xs)
+from param import*
 
 
 x0, xf = -1, 0
@@ -58,7 +19,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
 
     x = np.linspace(x0, xf, Nx)
     xs = 0.95
-    I = A + B * T0(x)
+    I = A_cste + B_cste * T0(x)
     plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
 
     for n in range(Nt):
@@ -82,7 +43,7 @@ def alpha(x):
 
 
 def beta(x):
-    return (C / dt) + 2 * (((1 - x ** 2) * D) / (dx ** 2))  + 1
+    return (tau / dt) + 2 * (((1 - x ** 2) * D) / (dx ** 2))  + 1
 
 
 def gamma(x):
@@ -90,7 +51,7 @@ def gamma(x):
 
 
 def delta():
-    return C / dt
+    return tau / dt
 
 
 def Mat(x):
@@ -113,17 +74,6 @@ def Vec(x, xs, I, func):
         vec[i] = func(x[i], xs)
     vec[0], vec[-1] = 0, 0
     return vec
-
-
-def homogene(x, xs):
-    return 0
-
-
-def T0(x):
-    """
-    Sea level temperature as a function of latitude for the climate in 1975
-    """
-    return -50 * x ** 2 + 28
 
 
 schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member)

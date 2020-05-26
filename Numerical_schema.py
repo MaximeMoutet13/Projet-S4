@@ -1,5 +1,4 @@
-import matplotlib.pyplot as plt
-from Parameters import *
+from param import *
 import time
 
 x0, xf = -1, 1
@@ -33,22 +32,23 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice, symetrique=True):
 
     x = np.linspace(x0, xf, Nx)
 
-    I = A + B * T0(x)
+    I = A_cste + B_cste * T0(x)
     RI = np.zeros(Nx)
-    alpha = (D * dt) / (C * dx ** 2)
+    alpha = (D * dt) / (tau * dx ** 2)
     plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="temps initial")
     xs = ice(I, x)
 
     for n in range(Nt):
-        print(n * 100 / Nt, "%")
+        # print(n * 100 / Nt, "%")
+        print(xs)
         for j in range(1, Nx - 1):
             if symetrique:
                 RI[j] = I[j] + dt * (F(x[j], xs) - x[j] * D * (I[j + 1] - I[j - 1]) / dx + (1 - x[j] ** 2) * D * (
-                        I[j + 1] + I[j - 1] - 2 * I[j]) / dx ** 2 - I[j]) / C
+                        I[j + 1] + I[j - 1] - 2 * I[j]) / dx ** 2 - I[j]) / tau
             else:
                 RI[j] = I[j + 1] * (-2 * alpha * dx * x[j] + alpha * (1 - x[j] ** 2)) + I[j] * (1 + 2 * alpha * x[j] * dx
                                                                                             - 2 * (1 - x[
-                        j] ** 2) * alpha - dt / C) + I[j - 1] * alpha * (1 - x[j] ** 2) + dt * F(x[j], xs) / C
+                        j] ** 2) * alpha - dt / tau) + I[j - 1] * alpha * (1 - x[j] ** 2) + dt * F(x[j], xs) / tau
 
         for j in range(1, Nx - 1):
             I[j] = RI[j]
@@ -63,17 +63,6 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice, symetrique=True):
     return xs
 
 
-def homogene(x, xs):
-    return 0
-
-
-def T0(x):
-    """
-    Sea level temperature as a function of latitude for the climate in 1975
-    """
-    return -50 * x ** 2 + 28
-
-
 def latitudeS(I0, x):
     if I0[0] >= 186.9:
         return 1
@@ -83,14 +72,13 @@ def latitudeS(I0, x):
     return 0
 
 
-debut = time.time()
-print(schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS, symetrique=False))
-fin = time.time()
+v = schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS)
+print(v)
 
 plt.plot(np.linspace(x0, xf, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
-plt.title(u'Schéma explicite asymétrique')
+plt.title(u'Schéma explicite symétrique')
 plt.legend()
 # plt.savefig("Exp_sol_asym.png")
 plt.show()
