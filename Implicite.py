@@ -18,8 +18,8 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
     Nt = round((tf - t0) / dt)
 
     x = np.linspace(x0, xf, Nx)
-    xs = 0.95
     I = A_cste + B_cste * T0(x)
+    xs = latitudeS(I, x)
     plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
     plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
     for n in range(Nt):
@@ -33,6 +33,10 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
         I = R
         I[0] = I[1]
         I[-1] = I[-2]
+        xs = latitudeS(I, x)
+        print("/////")
+        print(xs)
+        print("/////")
         if n % 100 == 0:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
@@ -68,6 +72,13 @@ def Mat(x):
     A[0, 0], A[-1, -1] = delta(), delta()
     return A
 
+def latitudeS(I0, x):
+    if I0[0] >= 186.9:
+        return 1
+    for i, I in enumerate(I0[1:]):
+        if I >= 186.9 - 0.001:
+            return abs((x[i - 1] + x[i]) / 2)
+    return 0
 
 def Vec(x, xs, I, func):
     vec = np.zeros(Nx)
