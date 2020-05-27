@@ -7,7 +7,7 @@ B_cste = 1.45
 
 D = 0.310
 tau = 14 / 1.45
-Q = 340
+Q_cste = 340
 
 def S(x):
     """
@@ -30,11 +30,11 @@ def a(x, xs):
         return a1
 
 
-def second_member(x, xs):
+def second_member(x, xs, q):
     """
     Gives the second member of the EDP
     """
-    return Q * S(x) * a(x, xs)
+    return q * S(x) * a(x, xs)
 
 
 def homogene(x, xs):

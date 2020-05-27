@@ -13,36 +13,39 @@ Nt = round((tf - t0) / dt)
 xs = 0.95
 
 
-def schema(x0, xf, dx, t0, tf, dt, T0, F, func):
+def schema(x0, xf, dx, t0, tf, dt, T0, F, func, q):
     Nx = round((xf - x0) / dx)
     Nt = round((tf - t0) / dt)
 
     x = np.linspace(x0, xf, Nx)
     I = A_cste + B_cste * T0(x)
     xs = latitudeS(I, x)
+
+    M = F(x)
+
     plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
     plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
     for n in range(Nt):
         # print("________________________")
-        print(n * 100 / Nt, "%")
-        M = F(x)
+        print("Ploting...", n * 100 / Nt, "%")
         # q = np.linalg.inv(M)
-        z = delta() * I + Vec(x, xs, I, func)
+        z = delta() * I + Vec(x, xs, func, q)
         R = np.linalg.solve(M, z)
-        # print(R)
         I = R
         I[0] = I[1]
         I[-1] = I[-2]
         xs = latitudeS(I, x)
-        print("/////")
-        print(xs)
-        print("/////")
+        # print("/////")
+        # print(xs)
+        # print("/////")
         if n % 100 == 0:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
         if n == Nt - 1:
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
+    return(xs)
+
 def alpha(x):
     return ((x * D) / dx) - (((1 - x ** 2) * D) / (dx ** 2))
 
@@ -80,15 +83,14 @@ def latitudeS(I0, x):
             return abs((x[i - 1] + x[i]) / 2)
     return 0
 
-def Vec(x, xs, I, func):
+def Vec(x, xs, func, q):
     vec = np.zeros(Nx)
     for i in range(Nx):
-        vec[i] = func(x[i], xs)
+        vec[i] = func(x[i], xs, q)
     vec[0], vec[-1] = 0, 0
     return vec
 
-
-schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member)
+print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste))
 
 plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
