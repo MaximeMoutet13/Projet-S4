@@ -22,7 +22,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func, q):
 
     M = F(x)
 
-    plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="temps initial")
+    plt.plot(x, I, color=plt.get_cmap('copper')(0 / Nt), label="$t_0=0$ ")
     plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
     for n in range(Nt):
         # print("________________________")
@@ -41,7 +41,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func, q):
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
         if n == Nt - 1:
-            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="temps final")
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="$t_f=10$")
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
     return(xs)
 
@@ -88,12 +88,12 @@ def Vec(x, xs, func, q):
         vec[i] = func(x[i], xs, q)
     return vec
 
-print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, homogene, Q_cste))
+print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste))
 
 plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
-plt.ylabel(u'$I (X.m^{-2})$', fontsize=20, rotation=90)
-plt.title(u'Schéma implicite')
+plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
+plt.title(u'Euler implicite homogène')
 plt.legend()
-plt.savefig("Implicte_homo.png")
+plt.savefig("im1.png")
 plt.show()

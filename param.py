@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# I = A + B T
+# I = A + B * T
 A_cste = 201.4
 B_cste = 1.45
 
