@@ -1,4 +1,4 @@
-from param import *
+from parametres import *
 import time
 import os
 

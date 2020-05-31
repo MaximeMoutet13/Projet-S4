@@ -1,4 +1,4 @@
-from param import*
+from parametres import*
 
 
 x0, xf = -1, 0
@@ -8,8 +8,6 @@ x = np.linspace(x0, xf, Nx)
 t0, tf = 0, 10
 dt = 0.01
 Nt = round((tf - t0) / dt)
-
-xs = 0.95
 
 
 def schema(x0, xf, dx, t0, tf, dt, T0, F, func, q):
@@ -93,7 +91,7 @@ print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste))
 plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
-plt.title(u'Euler implicite homogène')
+plt.title(u'Euler implicite avec second membre')
 plt.legend()
-plt.savefig("im1.png")
+plt.savefig("im99.png")
 plt.show()
