@@ -37,7 +37,7 @@ def second_member(x, xs, q):
     return q * S(x) * a(x, xs)
 
 
-def homogene(x, xs):
+def homogene(x, xs, q):
     return 0
 
 

@@ -5,7 +5,6 @@ x0, xf = -1, 0
 dx = 0.01
 Nx = round((xf - x0) / dx)
 x = np.linspace(x0, xf, Nx)
-
 t0, tf = 0, 10
 dt = 0.01
 Nt = round((tf - t0) / dt)
@@ -70,9 +69,9 @@ def Mat(x):
         A[i, i - 1] = gamma(x[i])
         A[i, i + 1] = alpha(x[i])
 
-    A[0, :] = 0
-    A[-1, :] = 0
-    A[0, 0], A[-1, -1] = delta(), delta()
+    A[0, :], A[-1, :] = 0, 0
+    A[0, 0], A[-1, -1] = beta(x[0]), delta() + 1
+
     return A
 
 def latitudeS(I0, x):
@@ -87,15 +86,14 @@ def Vec(x, xs, func, q):
     vec = np.zeros(Nx)
     for i in range(Nx):
         vec[i] = func(x[i], xs, q)
-    vec[0], vec[-1] = 0, 0
     return vec
 
-print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste))
+print(schema(x0, xf, dx, t0, tf, dt, T0, Mat, homogene, Q_cste))
 
 plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (X.m^{-2})$', fontsize=20, rotation=90)
 plt.title(u'Schéma implicite')
 plt.legend()
-# plt.savefig("Imp.png")
+plt.savefig("Implicte_homo.png")
 plt.show()
