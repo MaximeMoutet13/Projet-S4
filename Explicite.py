@@ -1,7 +1,7 @@
 from parametres import *
 import time
 import os
-
+import Solution
 
 x0, xf = -1, 0
 dx = 0.01
@@ -25,11 +25,11 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
 
     I = A_cste + B_cste * T0(x)
     RI = np.zeros(Nx)
-    plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="$t_0=0$")
-    plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
+    # plt.plot(x, I, color=plt.get_cmap('copper')(float(0) / Nt), label="$t_0=0$")
+    # plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(0 / Nt))
     xs = ice(I, x)
     for n in range(Nt):
-        print("Ploting...", int(n * 100 / Nt), "%")
+        print("Ploting...", n * 100 / Nt, "%")
         for j in range(Nx):
             if j==0:
                 RI[j] = I[j] + dt * (
@@ -47,15 +47,15 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, ice):
         I = RI
         xs = ice(I, x)
 
-        if n % 100 == 0:
-            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
-            plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
+        # if n % 100 == 0:
+        #     plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt))
+        #     plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
 
         if n == Nt - 1:
-            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="$t_f=10$")
+            plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="Courbe calculée")
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
     return xs
-
+plt.plot(Solution.x, Solution.I, label="Courbe théorique")
 
 def latitudeS(I0, x):
     if I0[0] >= 186.9:
@@ -69,10 +69,10 @@ def latitudeS(I0, x):
 v = schema(x0, xf, dx, t0, tf, dt, T0, second_member, latitudeS)
 print(v)
 
-plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
+# plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
-plt.title(u'Schéma explicite avec second membre')
+plt.title(u'Comparaison de la solution théorique et la solution approchée, $\Delta t=0.0001$')
 plt.legend()
-# plt.savefig("Im_explicite.png")
+plt.savefig("comp_explicite.png")
 plt.show()
