@@ -2,7 +2,7 @@ from parametres import*
 import Solution
 
 x0, xf = -1, 0
-dx = 0.2
+dx = 0.01
 Nx = round((xf - x0) / dx)
 x = np.linspace(x0, xf, Nx)
 t0, tf = 0, 10
@@ -42,6 +42,7 @@ def schema(x0, xf, dx, t0, tf, dt, T0, F, func, q):
             plt.plot(x, I, color=plt.get_cmap('copper')(float(n) / Nt), label="Courbe calculée")
             plt.plot(x + 1, I[::-1], color=plt.get_cmap('copper')(float(n) / Nt))
     return(xs, I)
+
 plt.plot(Solution.x, Solution.I, label="Courbe théorique")
 def alpha(x):
     return ((x * D) / dx) - (((1 - x ** 2) * D) / (dx ** 2))
@@ -87,7 +88,8 @@ def Vec(x, xs, func, q):
     return vec
 
 
-I = schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste)[1]
+xs, I = schema(x0, xf, dx, t0, tf, dt, T0, Mat, second_member, Q_cste)
+print(xs)
 I = list(I) + list(I[:-1])[::-1]
 print("I=", I)
 print("x=", list(x) + [-u for u in list(x[:-1])[::-1]])
@@ -95,7 +97,7 @@ print("x=", list(x) + [-u for u in list(x[:-1])[::-1]])
 # plt.plot(np.linspace(x0, xf + 1, Nx), 186.9 * np.ones(Nx), "b", label="ligne de glace")
 plt.xlabel(u'$x$', fontsize=20)
 plt.ylabel(u'$I (W.m^{-2})$', fontsize=20, rotation=90)
-plt.title(u'Comparaison entre la solution théorique et la solution approchée, $\Delta t=0.0001$')
+plt.title(u'Comparaison de la solution théorique et la solution approchée, $\Delta t=0.0001$')
 plt.legend()
 # plt.savefig("comp_0.0001.png")
 plt.show()

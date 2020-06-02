@@ -23,7 +23,7 @@ def a(x, xs):
     :param xs: sine of the latitude of ice-sheet edge
     """
     a1 = 0.38
-    a0 = 0.69
+    a0 = 0.68
     if abs(x) < xs:
         return a0
     else:
