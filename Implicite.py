@@ -1,4 +1,4 @@
-from parametres import*
+from parametres import* 
 import Solution
 
 x0, xf = -1, 0
